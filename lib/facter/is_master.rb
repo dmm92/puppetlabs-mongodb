@@ -37,7 +37,9 @@ Facter.add('mongodb_is_master') do
 
       if $?.success?
         # wrap in an object and parse as a simple sanity check
-        JSON.parse(Facter::Core::Execution.exec("mongo --quiet #{mongoPort} --eval \"#{e}{ismaster: db.isMaster().ismaster\"}"))['ismaster'] ||= false
+        ismaster = JSON.parse(Facter::Core::Execution.exec("mongo --quiet #{mongoPort} --eval \"#{e}{ismaster: db.isMaster().ismaster\"}"))['ismaster']
+        # turn nil into false:
+        !!ismaster
       else
         'not_responding'
       end
